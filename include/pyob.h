@@ -79,8 +79,12 @@ public:
   PyBase(bool sf=true) : po(NULL), selffree(sf) { q("PyBase()", r()); }
   PyBase(const PyBase &s) : po(s.po), selffree(s.selffree) {
     p("copied PyBase()", r()); if(po) Py_INCREF(po); }
-  PyBase &operator=(const PyBase &s){ po = s.po, selffree = s.selffree; // : ()
-    p("assign PyBase &()", r()); if(po) Py_INCREF(po); // *** be careful ***
+  PyBase &operator=(const PyBase &s){
+    if(po) Py_DECREF(po); // *** be careful ***
+    po = s.po, selffree = s.selffree; // : ()
+    p("assign PyBase &()", r());
+    if(!po){ throw std::runtime_error("Error no value PyBase(<NULL>): "); }
+    else Py_INCREF(po); // *** be careful ***
     return *this;
   }
   virtual ~PyBase(){ p("~PyBase()", r()); if(po && selffree) Py_DECREF(po); }
@@ -191,9 +195,11 @@ public:
     if(!po){ throw std::runtime_error("Error no key ? (GetItem): "); }
     else Py_INCREF(po); // *** be careful ***
   }
-  PyItem &operator=(const PyBase &s){ po = s.po, selffree = s.selffree; // : ()
+  PyItem &operator=(const PyBase &s){
+    if(po) Py_DECREF(po); // *** be careful ***
+    po = s.po, selffree = s.selffree; // : ()
     p("assign PyItem &()", r());
-    if(!po){ throw std::runtime_error("Error no value (NULL): "); }
+    if(!po){ throw std::runtime_error("Error no value PyItem(<NULL>): "); }
     else Py_INCREF(po); // *** be careful ***
     int t = PyObject_SetItem(parent.o(), kw.o(), po);
     if(t){ throw std::runtime_error("Error tuple or no key ? (SetItem): "); }
