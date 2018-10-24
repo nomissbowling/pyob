@@ -64,17 +64,19 @@ try{
   PyDct dct = PyDct({{"X", PYLNG(123)}, {"Y", PYDBL(4.56)}, {"Z", PYSTR("789")}});
 
   lst[1] = PYLNG(-10);
-PyObject_Print(PyObject_Repr(lst.o()), stdout, 0); fprintf(stdout, "\n");
+PYREPR(stdout, lst);
 
   try{
     tpl[1] = PYLNG(-99); // SKIP: exception - not allowed to change tuple item
   }catch(const std::exception &e){
     fprintf(stderr, "SKIP: exception[%s]\n", e.what());
   }
-PyObject_Print(PyObject_Repr(tpl.o()), stdout, 0); fprintf(stdout, "\n");
+PYREPR(stdout, tpl);
 
   dct["Y"] = PYDBL(-99);
-PyObject_Print(PyObject_Repr(dct.o()), stdout, 0); fprintf(stdout, "\n");
+PYREPR(stdout, dct);
+
+PYREPR(stdout, b); // kept
 }catch(const std::exception &e){
   fprintf(stderr, "exception[%s]\n", e.what());
 }

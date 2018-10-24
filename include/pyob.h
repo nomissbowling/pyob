@@ -30,6 +30,11 @@
 #define PYTPL(...) ((pyob::PyBase &)pyob::PyTpl(std::tie(__VA_ARGS__)))
 #define PYDCT(...) ((pyob::PyBase &)pyob::PyDct(__VA_ARGS__))
 #define PYBV(F, ...) ((pyob::PyBase &)pyob::PyBase(true, (F), ## __VA_ARGS__))
+#define PYREPR(S, X) do{ \
+  PyObject_Print(PyObject_Repr((X).o()), (S), 0); \
+  fprintf((S), "\n"); \
+  fflush(S); \
+}while(0)
 
 namespace pyob {
 

@@ -47,29 +47,29 @@ try{
   pyob::PyTpl tpl = pyob::PyTpl(std::tie(a, b, c));
   pyob::PyDct dct = pyob::PyDct({{"X", PYLNG(123)}, {"Y", PYDBL(4.56)}, {"Z", PYSTR("789")}});
 
-PyObject_Print(PyObject_Repr(lst.o()), stdout, 0); fprintf(stdout, "\n");
-PyObject_Print(PyObject_Repr(lst[1].o()), stdout, 0); fprintf(stdout, "\n");
+PYREPR(stdout, lst);
+PYREPR(stdout, lst[1]);
   lst[1] = PYLNG(-10);
-PyObject_Print(PyObject_Repr(lst[1].o()), stdout, 0); fprintf(stdout, "\n");
-PyObject_Print(PyObject_Repr(lst.o()), stdout, 0); fprintf(stdout, "\n");
+PYREPR(stdout, lst[1]);
+PYREPR(stdout, lst);
 
-PyObject_Print(PyObject_Repr(tpl.o()), stdout, 0); fprintf(stdout, "\n");
-PyObject_Print(PyObject_Repr(tpl[1].o()), stdout, 0); fprintf(stdout, "\n");
+PYREPR(stdout, tpl);
+PYREPR(stdout, tpl[1]);
   try{
     tpl[1] = PYLNG(-99); // SKIP: exception - not allowed to change tuple item
   }catch(const std::exception &e){
     fprintf(stderr, "SKIP: exception[%s]\n", e.what());
   }
-PyObject_Print(PyObject_Repr(tpl[1].o()), stdout, 0); fprintf(stdout, "\n");
-PyObject_Print(PyObject_Repr(tpl.o()), stdout, 0); fprintf(stdout, "\n");
+PYREPR(stdout, tpl[1]);
+PYREPR(stdout, tpl);
 
-PyObject_Print(PyObject_Repr(dct.o()), stdout, 0); fprintf(stdout, "\n");
-PyObject_Print(PyObject_Repr(dct["Y"].o()), stdout, 0); fprintf(stdout, "\n");
+PYREPR(stdout, dct);
+PYREPR(stdout, dct["Y"]);
   dct["Y"] = PYDBL(-99);
-PyObject_Print(PyObject_Repr(dct["Y"].o()), stdout, 0); fprintf(stdout, "\n");
-PyObject_Print(PyObject_Repr(dct.o()), stdout, 0); fprintf(stdout, "\n");
+PYREPR(stdout, dct["Y"]);
+PYREPR(stdout, dct);
 
-PyObject_Print(PyObject_Repr(b.o()), stdout, 0); fprintf(stdout, "\n"); // kept
+PYREPR(stdout, b); // kept
 }catch(const std::exception &e){
   fprintf(stderr, "exception[%s]\n", e.what());
 }
@@ -84,7 +84,7 @@ try{
   pyob::PyBase y = (np|"arange")(std::tie(PYLNG(-30), PYLNG(30), PYDBL(.1)), {});
   pyob::PyBase m = (np|"meshgrid")(std::tie(x, y), {});
   pyob::PyBase zz = (np|"sqrt")(MKTPL((m[0] ^ 2) + (m[1] ^ 2)), {});
-//PyObject_Print(PyObject_Repr(zz.o()), stdout, 0); fprintf(stdout, "\n");
+//PYREPR(stdout, zz);
 
   pyob::PyMod matplotlib("matplotlib");
   pyob::PyMod pyplot("matplotlib.pyplot");
