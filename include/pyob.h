@@ -46,6 +46,7 @@ class PyMod;
 class PyFnc;
 
 class PyBase {
+  friend class PyItem;
 public:
   static void begin(const wchar_t *p);
   static void end(void);
@@ -179,8 +180,16 @@ public:
   PyItem(PyBase &t, PyBase &k, bool sf=true) : PyBase(sf), parent(t), kw(k) {
     p("PyItem(*)", r());
     po = PyObject_GetItem(t.o(), k.o());
-    if(!po){ throw std::runtime_error("Error no key: "); }
-    else Py_INCREF(po);
+    if(!po){ throw std::runtime_error("Error no key ? (GetItem): "); }
+    else Py_INCREF(po); // *** be careful ***
+  }
+  PyItem &operator=(const PyBase &s){ po = s.po, selffree = s.selffree; // : ()
+    p("assign PyItem &()", r());
+    if(!po){ throw std::runtime_error("Error no value (NULL): "); }
+    else Py_INCREF(po); // *** be careful ***
+    int t = PyObject_SetItem(parent.o(), kw.o(), po);
+    if(t){ throw std::runtime_error("Error tuple or no key ? (SetItem): "); }
+    return *this;
   }
   virtual ~PyItem(){ q("~PyItem()"); }
 };

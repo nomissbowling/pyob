@@ -49,22 +49,23 @@ try{
 
 PyObject_Print(PyObject_Repr(lst.o()), stdout, 0); fprintf(stdout, "\n");
 PyObject_Print(PyObject_Repr(lst[1].o()), stdout, 0); fprintf(stdout, "\n");
-//  lst[1] = PYLNG(-10); // not change
-PyObject_SetItem(lst.o(), PYLNG(1).o(), PYLNG(-10).o());
+  lst[1] = PYLNG(-10);
 PyObject_Print(PyObject_Repr(lst[1].o()), stdout, 0); fprintf(stdout, "\n");
 PyObject_Print(PyObject_Repr(lst.o()), stdout, 0); fprintf(stdout, "\n");
 
 PyObject_Print(PyObject_Repr(tpl.o()), stdout, 0); fprintf(stdout, "\n");
 PyObject_Print(PyObject_Repr(tpl[1].o()), stdout, 0); fprintf(stdout, "\n");
-//  tpl[1] = PYLNG(-99); // not change
-PyObject_SetItem(tpl.o(), PYLNG(1).o(), PYLNG(-99).o()); // through not allowed
+  try{
+    tpl[1] = PYLNG(-99); // SKIP: exception - not allowed to change tuple item
+  }catch(const std::exception &e){
+    fprintf(stderr, "SKIP: exception[%s]\n", e.what());
+  }
 PyObject_Print(PyObject_Repr(tpl[1].o()), stdout, 0); fprintf(stdout, "\n");
 PyObject_Print(PyObject_Repr(tpl.o()), stdout, 0); fprintf(stdout, "\n");
 
 PyObject_Print(PyObject_Repr(dct.o()), stdout, 0); fprintf(stdout, "\n");
 PyObject_Print(PyObject_Repr(dct["Y"].o()), stdout, 0); fprintf(stdout, "\n");
-//  dct["Y"] = PYDBL(-99); // not change
-PyDict_SetItemString(dct.o(), "Y", PYDBL(-99).o());
+  dct["Y"] = PYDBL(-99);
 PyObject_Print(PyObject_Repr(dct["Y"].o()), stdout, 0); fprintf(stdout, "\n");
 PyObject_Print(PyObject_Repr(dct.o()), stdout, 0); fprintf(stdout, "\n");
 }catch(const std::exception &e){
