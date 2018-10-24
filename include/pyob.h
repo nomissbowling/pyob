@@ -18,7 +18,7 @@
 #include "matplotlibcpp.h"
 
 #define PYOB_TRACE_OFF
-#define PYOB_VERSION (0.1)
+#define PYOB_VERSION (0.8)
 
 #define MKTPL(...) (std::make_tuple(__VA_ARGS__))
 #define PYNONE ((pyob::PyBase &)pyob::PyObj())

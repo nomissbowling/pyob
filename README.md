@@ -56,6 +56,30 @@ int main(int argc, char **argv)
   PyBase::begin(L"dummy");
 
 try{
+  PyLng a(3);
+  PyLng b(5);
+  PyLng c(7);
+  PyLst lst = PyLst(tie(a, b, c));
+  PyTpl tpl = PyTpl(tie(a, b, c));
+  PyDct dct = PyDct({{"X", PYLNG(123)}, {"Y", PYDBL(4.56)}, {"Z", PYSTR("789")}});
+
+  lst[1] = PYLNG(-10);
+PyObject_Print(PyObject_Repr(lst.o()), stdout, 0); fprintf(stdout, "\n");
+
+  try{
+    tpl[1] = PYLNG(-99); // SKIP: exception - not allowed to change tuple item
+  }catch(const std::exception &e){
+    fprintf(stderr, "SKIP: exception[%s]\n", e.what());
+  }
+PyObject_Print(PyObject_Repr(tpl.o()), stdout, 0); fprintf(stdout, "\n");
+
+  dct["Y"] = PYDBL(-99);
+PyObject_Print(PyObject_Repr(dct.o()), stdout, 0); fprintf(stdout, "\n");
+}catch(const std::exception &e){
+  fprintf(stderr, "exception[%s]\n", e.what());
+}
+
+try{
   PyMod np("numpy");
   fprintf(stdout, "%20.17lf\n", double(np|"pi")); // 3.14159265358979323846...
   fprintf(stdout, "%20.17lf\n", double(np|"e")); // 2.71828182845904523536...
