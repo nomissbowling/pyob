@@ -68,6 +68,8 @@ PyObject_Print(PyObject_Repr(dct["Y"].o()), stdout, 0); fprintf(stdout, "\n");
   dct["Y"] = PYDBL(-99);
 PyObject_Print(PyObject_Repr(dct["Y"].o()), stdout, 0); fprintf(stdout, "\n");
 PyObject_Print(PyObject_Repr(dct.o()), stdout, 0); fprintf(stdout, "\n");
+
+PyObject_Print(PyObject_Repr(b.o()), stdout, 0); fprintf(stdout, "\n"); // kept
 }catch(const std::exception &e){
   fprintf(stderr, "exception[%s]\n", e.what());
 }
