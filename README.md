@@ -83,6 +83,21 @@ PYREPR(stdout, b); // kept
 
 try{
   PyMod np("numpy");
+  PyBase a = (np|"array")(MKTPL(PYTPL(PYTPL(PYLNG(1), PYLNG(2)), PYTPL(PYLNG(3), PYLNG(4)))), {});
+PYREPR(stdout, a);
+  PyBase b = (np|"identity")(MKTPL(PYLNG(2)), {});
+PYREPR(stdout, b);
+  PyBase c = a * b;
+PYREPR(stdout, c);
+  PyBase d = a & b;
+PYREPR(stdout, d);
+PYREPR(stdout, a & a);
+}catch(const std::exception &e){
+  fprintf(stderr, "exception[%s]\n", e.what());
+}
+
+try{
+  PyMod np("numpy");
   fprintf(stdout, "%20.17lf\n", double(np|"pi")); // 3.14159265358979323846...
   fprintf(stdout, "%20.17lf\n", double(np|"e")); // 2.71828182845904523536...
 

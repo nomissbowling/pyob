@@ -116,6 +116,8 @@ public:
     return (op|"add")(std::tie(*this, b), {}); }
   PyBase operator-(const PyBase &b){ PyBase op(PyBase::mop, false);
     return (op|"sub")(std::tie(*this, b), {}); }
+  PyBase operator&(const PyBase &b){ PyBase op(PyBase::mop, false);
+    return (op|"matmul")(std::tie(*this, b), {}); } // '@' exception if scalar
   PyBase operator*(const PyBase &b){ PyBase op(PyBase::mop, false);
     return (op|"mul")(std::tie(*this, b), {}); }
   PyBase operator/(const PyBase &b){ PyBase op(PyBase::mop, false);

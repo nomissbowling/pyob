@@ -75,6 +75,23 @@ PYREPR(stdout, b); // kept
 }
 }
 
+void test_mat(void){
+try{
+  pyob::PyMod np("numpy");
+  pyob::PyBase a = (np|"array")(MKTPL(PYTPL(PYTPL(PYLNG(1), PYLNG(2)), PYTPL(PYLNG(3), PYLNG(4)))), {});
+PYREPR(stdout, a);
+  pyob::PyBase b = (np|"identity")(MKTPL(PYLNG(2)), {});
+PYREPR(stdout, b);
+  pyob::PyBase c = a * b;
+PYREPR(stdout, c);
+  pyob::PyBase d = a & b;
+PYREPR(stdout, d);
+PYREPR(stdout, a & a);
+}catch(const std::exception &e){
+  fprintf(stderr, "exception[%s]\n", e.what());
+}
+}
+
 void test_pyplot(const char *title){
 try{
   pyob::PyMod np("numpy");
