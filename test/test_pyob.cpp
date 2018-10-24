@@ -70,6 +70,17 @@ PYREPR(stdout, dct["Y"]);
 PYREPR(stdout, dct);
 
 PYREPR(stdout, b); // kept
+
+  pyob::PyTpl keytpl(std::tie(PYLNG(3), PYLNG(4)));
+  pyob::PyDct dcttpl;
+  dcttpl.setitem(PYTPL(PYLNG(1), PYLNG(2)), PYLNG(11));
+  dcttpl.setitem(PYTPL(PYLNG(3), PYLNG(4)), PYLNG(44));
+PYREPR(stdout, dcttpl);
+PYREPR(stdout, dcttpl[keytpl]);
+  dcttpl[keytpl] = PYDBL(33);
+//  dcttpl[PYTPL(PYLNG(5), PYLNG(6))] = PYLNG(55); // no key
+PYREPR(stdout, dcttpl[keytpl]);
+PYREPR(stdout, dcttpl);
 }catch(const std::exception &e){
   fprintf(stderr, "exception[%s]\n", e.what());
 }

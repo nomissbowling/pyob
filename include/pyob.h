@@ -147,6 +147,7 @@ public:
   PyItem operator[](int n); // LA (not PyItem &operator[])
   PyItem operator[](long n); // LA (not PyItem &operator[])
   PyItem operator[](const char *k); // LA (not PyItem &operator[])
+  PyItem operator[](PyBase k); // LA (not PyItem &operator[](const PyBase &k))
   PyObject *attr(const char *s, bool askv=false){
     if(askv) return PyDict_GetItemString(po, s);
     else return PyObject_GetAttrString(po, s);
@@ -318,9 +319,9 @@ class PyDct : public PyBase {
 protected:
 public:
   PyDct(const std::map<const char *, PyBase &> &d, bool sf=true) : PyBase(sf) {
-    p("PyDct(map)");
+    p("PyDct(map{char *})");
     po = PyDict_New();
-    if(!po){ throw std::runtime_error("Error dict: "); }
+    if(!po){ throw std::runtime_error("Error dict{char *}: "); }
     else Py_INCREF(po);
     for(auto it = d.begin(); it != d.end(); ++it){
 //      fprintf(stderr, "[%s]", it->first);
@@ -407,6 +408,9 @@ PyItem PyBase::operator[](long n){ return PyItem(*this, PYLNG(n)); } // Lst/Tpl
 
 inline
 PyItem PyBase::operator[](const char *k){ return PyItem(*this, PYSTR(k)); }
+
+inline
+PyItem PyBase::operator[](PyBase k){ return PyItem(*this, k); }
 
 inline
 PyBase PyBase::c(const PyBase &fnc, const PyTpl &args, const PyDct &kwargs){
