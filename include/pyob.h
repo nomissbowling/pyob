@@ -34,6 +34,7 @@
 namespace pyob {
 
 class PyBase;
+class PyItem;
 class PyStr;
 class PyLng;
 class PyDbl;
@@ -135,9 +136,9 @@ public:
   PyBase operator/(double b); // LA
   PyBase operator%(double b); // LA cast to long
   PyBase operator^(double b); // LA
-  PyBase &operator[](int n){ return (*this)[(long)n]; }
-  PyBase &operator[](long n); // LA
-  PyBase &operator[](const char *k); // LA
+  PyItem operator[](int n); // LA (not PyItem &operator[])
+  PyItem operator[](long n); // LA (not PyItem &operator[])
+  PyItem operator[](const char *k); // LA (not PyItem &operator[])
   PyObject *attr(const char *s, bool askv=false){
     if(askv) return PyDict_GetItemString(po, s);
     else return PyObject_GetAttrString(po, s);
@@ -168,6 +169,20 @@ template< typename ... Ts >
   PyBase operator()(const PyTpl &args); // LA
   PyBase operator()(const PyDct &kwargs); // LA
   PyBase operator()(); // LA
+};
+
+class PyItem : public PyBase {
+protected:
+  PyBase parent;
+  PyBase kw;
+public:
+  PyItem(PyBase &t, PyBase &k, bool sf=true) : PyBase(sf), parent(t), kw(k) {
+    p("PyItem(*)", r());
+    po = PyObject_GetItem(t.o(), k.o());
+    if(!po){ throw std::runtime_error("Error no key: "); }
+    else Py_INCREF(po);
+  }
+  virtual ~PyItem(){ q("~PyItem()"); }
 };
 
 class PyStr : public PyBase {
@@ -369,14 +384,13 @@ inline
 PyBase PyBase::operator^(double b){ return *this ^ PYDBL(b); } // '**' not xor
 
 inline
-PyBase &PyBase::operator[](long n){
-  return (PyBase &)PyBase(PyObject_GetItem(po, PYLNG(n).o())); // List or Tuple
-}
+PyItem PyBase::operator[](int n){ return (*this)[(long)n]; }
 
 inline
-PyBase &PyBase::operator[](const char *k){
-  return (PyBase &)PyBase(PyDict_GetItemString(po, k));
-}
+PyItem PyBase::operator[](long n){ return PyItem(*this, PYLNG(n)); } // Lst/Tpl
+
+inline
+PyItem PyBase::operator[](const char *k){ return PyItem(*this, PYSTR(k)); }
 
 inline
 PyBase PyBase::c(const PyBase &fnc, const PyTpl &args, const PyDct &kwargs){

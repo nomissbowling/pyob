@@ -43,8 +43,9 @@ try{
   pyob::PyLng a(3);
   pyob::PyLng b(5);
   pyob::PyLng c(7);
-  pyob::PyLst lst = pyob::PyLst(std::tie(a, b, c), {});
-  pyob::PyTpl tpl = pyob::PyTpl(std::tie(a, b, c), {});
+  pyob::PyLst lst = pyob::PyLst(std::tie(a, b, c));
+  pyob::PyTpl tpl = pyob::PyTpl(std::tie(a, b, c));
+  pyob::PyDct dct = pyob::PyDct({{"X", PYLNG(123)}, {"Y", PYDBL(4.56)}, {"Z", PYSTR("789")}});
 
 PyObject_Print(PyObject_Repr(lst.o()), stdout, 0); fprintf(stdout, "\n");
 PyObject_Print(PyObject_Repr(lst[1].o()), stdout, 0); fprintf(stdout, "\n");
@@ -59,6 +60,13 @@ PyObject_Print(PyObject_Repr(tpl[1].o()), stdout, 0); fprintf(stdout, "\n");
 PyObject_SetItem(tpl.o(), PYLNG(1).o(), PYLNG(-99).o()); // through not allowed
 PyObject_Print(PyObject_Repr(tpl[1].o()), stdout, 0); fprintf(stdout, "\n");
 PyObject_Print(PyObject_Repr(tpl.o()), stdout, 0); fprintf(stdout, "\n");
+
+PyObject_Print(PyObject_Repr(dct.o()), stdout, 0); fprintf(stdout, "\n");
+PyObject_Print(PyObject_Repr(dct["Y"].o()), stdout, 0); fprintf(stdout, "\n");
+//  dct["Y"] = PYDBL(-99); // not change
+PyDict_SetItemString(dct.o(), "Y", PYDBL(-99).o());
+PyObject_Print(PyObject_Repr(dct["Y"].o()), stdout, 0); fprintf(stdout, "\n");
+PyObject_Print(PyObject_Repr(dct.o()), stdout, 0); fprintf(stdout, "\n");
 }catch(const std::exception &e){
   fprintf(stderr, "exception[%s]\n", e.what());
 }
