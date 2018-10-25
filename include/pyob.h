@@ -78,12 +78,15 @@ public:
   }
   PyBase(bool sf=true) : po(NULL), selffree(sf) { q("PyBase()", r()); }
   PyBase(const PyBase &s) : po(s.po), selffree(s.selffree) {
-    p("copied PyBase()", r()); if(po) Py_INCREF(po); }
+    p("copied PyBase()", r());
+    if(!po){ throw std::runtime_error("Error no value src PyBase(<NULL>): "); }
+    else Py_INCREF(po); // *** be careful ***
+  }
   PyBase &operator=(const PyBase &s){
     if(po) Py_DECREF(po); // *** be careful ***
     po = s.po, selffree = s.selffree; // : ()
     p("assign PyBase &()", r());
-    if(!po){ throw std::runtime_error("Error no value PyBase(<NULL>): "); }
+    if(!po){ throw std::runtime_error("Error no value = PyBase(<NULL>): "); }
     else Py_INCREF(po); // *** be careful ***
     return *this;
   }
@@ -192,8 +195,11 @@ public:
   PyItem(PyBase &t, PyBase &k, bool sf=true) : PyBase(sf), parent(t), kw(k) {
     p("PyItem(*)", r());
     po = PyObject_GetItem(t.o(), k.o());
+#if 0 // skip whenever NULL to set value later
     if(!po){ throw std::runtime_error("Error no key ? (GetItem): "); }
     else Py_INCREF(po); // *** be careful ***
+#endif
+    if(po) Py_INCREF(po); // *** be careful ***
   }
   PyItem &operator=(const PyBase &s){
     if(po) Py_DECREF(po); // *** be careful ***

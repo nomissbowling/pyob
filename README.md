@@ -64,6 +64,11 @@ try{
   PyDct dct = PyDct({{"X", PYLNG(123)}, {"Y", PYDBL(4.56)}, {"Z", PYSTR("789")}});
 
   lst[1] = PYLNG(-10);
+  try{
+    lst[9] = PYLNG(-99); // SKIP: exception - invalid index
+  }catch(const std::exception &e){
+    fprintf(stderr, "SKIP: exception[%s]\n", e.what());
+  }
 PYREPR(stdout, lst);
 
   try{
@@ -79,13 +84,19 @@ PYREPR(stdout, dct);
 PYREPR(stdout, b); // kept
 
   PyTpl keytpl(tie(PYLNG(3), PYLNG(4)));
+  PyTpl tmptpl(tie(PYLNG(5), PYLNG(6)));
   PyDct dcttpl;
-  dcttpl.setitem(PYTPL(PYLNG(1), PYLNG(2)), PYLNG(11));
-  dcttpl.setitem(PYTPL(PYLNG(3), PYLNG(4)), PYLNG(44));
+  dcttpl[PYTPL(PYLNG(1), PYLNG(2))] = PYLNG(11);
+  dcttpl[PYTPL(PYLNG(3), PYLNG(4))] = PYLNG(44);
 PYREPR(stdout, dcttpl);
 PYREPR(stdout, dcttpl[keytpl]);
   dcttpl[keytpl] = PYDBL(33);
-//  dcttpl[PYTPL(PYLNG(5), PYLNG(6))] = PYLNG(55); // no key
+  try{
+    PyBase t = dcttpl[tmptpl]; // SKIP: exception - reference to NULL
+  }catch(const std::exception &e){
+    fprintf(stderr, "SKIP: exception[%s]\n", e.what());
+  }
+  dcttpl[tmptpl] = PYLNG(55);
 PYREPR(stdout, dcttpl[keytpl]);
 PYREPR(stdout, dcttpl);
 }catch(const std::exception &e){
