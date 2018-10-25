@@ -113,8 +113,22 @@ public:
   Py_ssize_t len(){ return PyObject_Length(po); } // list tuple dict.keys()
   operator char *(){ return PyBytes_AsString(PyObject_Bytes(po)); }
   operator wchar_t *(){ return (wchar_t *)PyUnicode_AS_DATA(PyObject_Str(po)); }
+  operator bool(){ return PyBool_Check(po); }
+  operator int(){ return (int)(long)*this; } // not use it *** be careful ***
   operator long(){ return PyLong_AsLong(po); }
   operator double(){ return PyFloat_AsDouble(po); }
+  PyBase operator<(const PyBase &b){ PyBase op(PyBase::mop, false);
+    return (op|"lt")(std::tie(*this, b), {}); }
+  PyBase operator<=(const PyBase &b){ PyBase op(PyBase::mop, false);
+    return (op|"le")(std::tie(*this, b), {}); }
+  PyBase operator==(const PyBase &b){ PyBase op(PyBase::mop, false);
+    return (op|"eq")(std::tie(*this, b), {}); }
+  PyBase operator!=(const PyBase &b){ PyBase op(PyBase::mop, false);
+    return (op|"ne")(std::tie(*this, b), {}); }
+  PyBase operator>=(const PyBase &b){ PyBase op(PyBase::mop, false);
+    return (op|"ge")(std::tie(*this, b), {}); }
+  PyBase operator>(const PyBase &b){ PyBase op(PyBase::mop, false);
+    return (op|"gt")(std::tie(*this, b), {}); }
   PyBase operator+(){ PyBase op(PyBase::mop, false);
     return (op|"pos")(std::tie(*this), {}); }
   PyBase operator-(){ PyBase op(PyBase::mop, false);

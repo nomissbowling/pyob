@@ -83,11 +83,11 @@ PYREPR(stdout, dct);
 
 PYREPR(stdout, b); // kept
 
-  PyTpl keytpl(tie(PYLNG(3), PYLNG(4)));
+  PyTpl keytpl(tie(PYLNG(3), PYLNG(4))); // tuple as an instance
   PyTpl tmptpl(tie(PYLNG(5), PYLNG(6)));
   PyDct dcttpl;
   dcttpl[PYTPL(PYLNG(1), PYLNG(2))] = PYLNG(11);
-  dcttpl[PYTPL(PYLNG(3), PYLNG(4))] = PYLNG(44);
+  dcttpl[PYTPL(PYLNG(3), PYLNG(4))] = PYLNG(44); // tuple as another instance
 PYREPR(stdout, dcttpl);
 PYREPR(stdout, dcttpl[keytpl]);
   dcttpl[keytpl] = PYDBL(33);
