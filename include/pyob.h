@@ -108,6 +108,15 @@ public:
 #endif
   }
   PyObject *o(){ return po; }
+  struct HashKey {
+    std::size_t operator()(const PyBase &b) const { return (std::size_t)b.po; }
+  };
+  struct HashEqualTo { // called it after when HashKey(L) == HashKey(R)
+    bool operator()(const PyBase &a, const PyBase &b) const {
+      // return (PyBase &)a == (PyBase &)b; // PyUnicode_(Rich)Compare for str?
+      return false; // now always false, otherwise crash
+    }
+  };
   const wchar_t *repr(){ return (const wchar_t *)PyUnicode_AS_DATA(PyObject_Repr(po)); }
   const wchar_t *ascii(){ return (const wchar_t *)PyUnicode_AS_DATA(PyObject_ASCII(po)); }
   const char *bytes(){ return PyBytes_AsString(PyObject_Bytes(po)); }
@@ -355,6 +364,18 @@ public:
 //      fprintf(stderr, "[%s]", it->first);
 //      fprintf(stderr, "=[%08X]\n", it->second.o());
       PyDict_SetItemString(po, it->first, it->second.o());
+    }
+  }
+  // dummy (to determinate ambiguous unordered_map<> type) not const PyBase &
+  PyDct(bool dummy, const std::unordered_map<const PyBase, PyBase &, PyBase::HashKey, PyBase::HashEqualTo> &d, bool sf=true) : PyBase(sf) {
+    p("PyDct(dict{PyBase &})");
+    po = PyDict_New();
+    if(!po){ throw std::runtime_error("Error dict{PyBase &}: "); }
+    else Py_INCREF(po);
+    for(auto it = d.begin(); it != d.end(); ++it){
+//      fprintf(stderr, "[%08X]", ((PyBase &)it->first).o());
+//      fprintf(stderr, "=[%08X]\n", it->second.o());
+      PyDict_SetItem(po, ((PyBase &)it->first).o(), it->second.o());
     }
   }
   PyDct(bool sf=true) : PyBase(sf) { p("PyDct()");

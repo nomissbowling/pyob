@@ -20,7 +20,8 @@ void PyBase::begin(const wchar_t *p){
 try{
   // Py_SetProgramName(p);
   if(!Py_IsInitialized()) Py_Initialize();
-  pyob::PyBase::mop = PyImport_Import(pyob::PyStr("operator").o());
+  if(!pyob::PyBase::mop)
+    pyob::PyBase::mop = PyImport_Import(pyob::PyStr("operator").o());
 }catch(const std::exception &e){
   fprintf(stderr, "exception[%s]\n", e.what());
 }
