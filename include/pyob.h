@@ -8,6 +8,8 @@
 #include <vector>
 #include <tuple>
 #include <map>
+#include <unordered_map>
+#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <stdio.h>
@@ -192,9 +194,9 @@ public:
   PyBase c(const char *f); // LA
   PyBase c(const char *f, int m, bool sf, const char *fmt, ...); // LA
 template< typename ... Ts >
-  PyBase c(const char *f, const std::tuple< Ts... > &t, const std::map<const char *, PyBase &> &d, bool askv=false); // LA
+  PyBase c(const char *f, const std::tuple< Ts... > &t, const std::unordered_map<const char *, PyBase &> &d, bool askv=false); // LA
 template< typename ... Ts >
-  PyBase operator()(const std::tuple< Ts... > &t, const std::map<const char *, PyBase &> &d); // LA
+  PyBase operator()(const std::tuple< Ts... > &t, const std::unordered_map<const char *, PyBase &> &d); // LA
   PyBase operator()(const PyTpl &args, const PyDct &kwargs); // LA
   PyBase operator()(const PyTpl &args); // LA
   PyBase operator()(const PyDct &kwargs); // LA
@@ -344,8 +346,8 @@ public:
 class PyDct : public PyBase {
 protected:
 public:
-  PyDct(const std::map<const char *, PyBase &> &d, bool sf=true) : PyBase(sf) {
-    p("PyDct(map{char *})");
+  PyDct(const std::unordered_map<const char *, PyBase &> &d, bool sf=true) : PyBase(sf) {
+    p("PyDct(dict{char *})");
     po = PyDict_New();
     if(!po){ throw std::runtime_error("Error dict{char *}: "); }
     else Py_INCREF(po);
@@ -512,18 +514,18 @@ try{
 
 template< typename ... Ts >
 inline
-PyBase PyBase::c(const char *f, const std::tuple< Ts... > &t, const std::map<const char *, PyBase &> &d, bool askv){
+PyBase PyBase::c(const char *f, const std::tuple< Ts... > &t, const std::unordered_map<const char *, PyBase &> &d, bool askv){
   return a(f, askv)(t, d);
 }
 
 template< typename ... Ts >
 inline
-PyBase PyBase::operator()(const std::tuple< Ts... > &t, const std::map<const char *, PyBase &> &d){
+PyBase PyBase::operator()(const std::tuple< Ts... > &t, const std::unordered_map<const char *, PyBase &> &d){
   PyBase r; // call Py_INCREF() later to separate here (outside of try...catch)
 try{
   r = c(*this, PyTpl(t), PyDct(d));
 }catch(const std::exception &e){
-  p("EXCEPTION in c(f, std::tuple, std::map)\a");
+  p("EXCEPTION in c(f, std::tuple, std::unordered_map)\a");
   throw std::runtime_error(e.what());
 }
   Py_INCREF(r.o()); // *** be careful ***
