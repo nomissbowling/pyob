@@ -71,9 +71,9 @@ try{
   PyLng a(3);
   PyLng b(5);
   PyLng c(7);
-  PyLst lst = PyLst(tie(a, b, c));
-  PyTpl tpl = PyTpl(tie(a, b, c));
-  PyDct dct = PyDct({ {"X", PYLNG(123)}, {"Y", PYDBL(4.56)}, {"Z", PYSTR("789")} });
+  PyLst lst(tie(a, b, c));
+  PyTpl tpl(tie(a, b, c));
+  PyDct dct({ {"X", PYLNG(123)}, {"Y", PYDBL(4.56)}, {"Z", PYSTR("789")} });
 
   lst[1] = PYLNG(-10);
   try{

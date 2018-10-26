@@ -43,9 +43,9 @@ try{
   pyob::PyLng a(3);
   pyob::PyLng b(5);
   pyob::PyLng c(7);
-  pyob::PyLst lst = pyob::PyLst(std::tie(a, b, c));
-  pyob::PyTpl tpl = pyob::PyTpl(std::tie(a, b, c));
-  pyob::PyDct dct = pyob::PyDct({{"X", PYLNG(123)}, {"Y", PYDBL(4.56)}, {"Z", PYSTR("789")}});
+  pyob::PyLst lst(std::tie(a, b, c));
+  pyob::PyTpl tpl(std::tie(a, b, c));
+  pyob::PyDct dct({{"X", PYLNG(123)}, {"Y", PYDBL(4.56)}, {"Z", PYSTR("789")}});
 
 PYREPR(stdout, lst);
 PYREPR(stdout, lst[1]);
