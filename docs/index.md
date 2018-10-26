@@ -68,65 +68,6 @@ int main(int argc, char **argv)
   PyBase::begin(L"dummy");
 
 try{
-  PyLng a(3);
-  PyLng b(5);
-  PyLng c(7);
-  PyLst lst = PyLst(tie(a, b, c));
-  PyTpl tpl = PyTpl(tie(a, b, c));
-  PyDct dct = PyDct({ {"X", PYLNG(123)}, {"Y", PYDBL(4.56)}, {"Z", PYSTR("789")} });
-
-  lst[1] = PYLNG(-10);
-  try{
-    lst[9] = PYLNG(-99); // SKIP: exception - invalid index
-  }catch(const std::exception &e){
-    fprintf(stderr, "SKIP: exception[%s]\n", e.what());
-  }
-PYREPR(stdout, lst);
-
-  try{
-    tpl[1] = PYLNG(-99); // SKIP: exception - not allowed to change tuple item
-  }catch(const std::exception &e){
-    fprintf(stderr, "SKIP: exception[%s]\n", e.what());
-  }
-PYREPR(stdout, tpl);
-
-  dct["Y"] = PYDBL(-99);
-PYREPR(stdout, dct);
-
-PYREPR(stdout, b); // kept
-
-  PyTpl keytpl(tie(PYLNG(3), PYLNG(4))); // tuple as an instance
-  PyTpl tmptpl(tie(PYLNG(5), PYLNG(6)));
-/*
-  PyDct dcttpl;
-  dcttpl[PYTPL(PYLNG(1), PYLNG(2))] = PYLNG(11);
-*/
-  PyDct dcttpl(true, { {PYTPL(PYLNG(1), PYLNG(2)), PYLNG(22)} });
-  dcttpl[PYTPL(PYLNG(3), PYLNG(4))] = PYLNG(44); // tuple as another instance
-PYREPR(stdout, dcttpl);
-PYREPR(stdout, dcttpl[keytpl]);
-  dcttpl[keytpl] = PYDBL(33);
-  try{
-    PyBase t = dcttpl[tmptpl]; // SKIP: exception - reference to NULL
-  }catch(const std::exception &e){
-    fprintf(stderr, "SKIP: exception[%s]\n", e.what());
-  }
-  dcttpl[tmptpl] = PYLNG(55);
-PYREPR(stdout, dcttpl[keytpl]);
-PYREPR(stdout, dcttpl);
-
-  PyDct dctstr({ {"a", PYLNG(10)}, {"b", PYLNG(20)}, {"c", PYLNG(30)} });
-  dctstr[PYSTR("b")] = PYDBL(99.99);
-PYREPR(stdout, dctstr);
-
-  PyDct dctobj(true, { {PYSTR("x"), PYLNG(11)}, {PYSTR("y"), PYLNG(22)}, {PYSTR("z"), PYLNG(33)} });
-  dctobj["y"] = PYDBL(22.22);
-PYREPR(stdout, dctobj);
-}catch(const std::exception &e){
-  fprintf(stderr, "exception[%s]\n", e.what());
-}
-
-try{
   PyMod np("numpy");
   PyBase a = (np|"array")(MKTPL(PYTPL(PYTPL(PYLNG(1), PYLNG(2)), PYTPL(PYLNG(3), PYLNG(4)))), {});
 PYREPR(stdout, a);
