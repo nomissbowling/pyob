@@ -1,5 +1,6 @@
 /*
   test_fractal.cpp
+*/
 
 // set PYTHONHOME=...\Anaconda3
 
@@ -24,7 +25,6 @@
 
 // (VC) add to project: from ...\matplotlib_pyob
 // include/matplotlibcpp.h, include/pyob.h, src/pyob.cpp, test/test_fractal.cpp
-*/
 
 //#ifdef _CONSOLE || _WINDOWS
 #include "stdafx.h"
@@ -47,19 +47,93 @@
 using namespace std;
 using namespace pyob;
 
+PyBase SC1(double r){
+  PyMod np("numpy");
+  return (np|"array")(MKTPL(PYTPL(
+    PYTPL(PYDBL(r), PYDBL(0), PYDBL(0)),
+    PYTPL(PYDBL(0), PYDBL(r), PYDBL(0)),
+    PYTPL(PYDBL(0), PYDBL(0), PYDBL(1)))), {});
+}
+
+PyBase SC2(double rx, double ry){
+  PyMod np("numpy");
+  return (np|"array")(MKTPL(PYTPL(
+    PYTPL(PYDBL(rx), PYDBL(0), PYDBL(0)),
+    PYTPL(PYDBL(0), PYDBL(ry), PYDBL(0)),
+    PYTPL(PYDBL(0), PYDBL(0), PYDBL(1)))), {});
+}
+
+PyBase SFT(double dx, double dy){
+  PyMod np("numpy");
+  return (np|"array")(MKTPL(PYTPL(
+    PYTPL(PYDBL(1), PYDBL(0), PYDBL(dx)),
+    PYTPL(PYDBL(0), PYDBL(1), PYDBL(dy)),
+    PYTPL(PYDBL(0), PYDBL(0), PYDBL(1)))), {});
+}
+
+PyBase ROT(double a){
+  PyMod np("numpy");
+  PyBase c = (np|"cos")(MKTPL(PYDBL(a)), {});
+  PyBase s = (np|"sin")(MKTPL(PYDBL(a)), {});
+  return (np|"array")(MKTPL(PYTPL(
+    PYTPL(PYOBJ(c), PYOBJ(-s), PYDBL(0)),
+    PYTPL(PYOBJ(s), PYOBJ(c), PYDBL(0)),
+    PYTPL(PYDBL(0), PYDBL(0), PYDBL(1)))), {});
+}
+
+void fractal(PyBase m, double s, int c,
+  PyBase &ax, int brk, double r1, double r2, PyBase f1, PyBase f2,
+  const char *col, PyBase &np, PyBase &mpl){
+//  if(c >= brk - 1) fprintf(stdout, "%06d, %20.17lf\n", c, s); fflush(stdout);
+  if(c >= brk){
+    PyBase xyz = m & ((np|"array")(MKTPL(PYTPL(
+      PYTPL(PYDBL(0), PYDBL(1)),
+      PYTPL(PYDBL(0), PYDBL(0)),
+      PYTPL(PYDBL(1), PYDBL(1)))), {}));
+//    PYREPR(stdout, xyz);
+    PyBase x = xyz[0];
+    PyBase y = xyz[1];
+    PyBase z = xyz[2];
+    (ax|"plot")(MKTPL(x, y, PYSTR(col)), {});
+//    (mpl|"pause")(MKTPL(PYDBL(0.005)), {}); // ** will be slowly ***
+    return;
+  }
+  fractal(f1 & m, s * r1, c + 1, ax, brk, r1, r2, f1, f2, col, np, mpl);
+  fractal(f2 & m, s * r2, c + 1, ax, brk, r1, r2, f1, f2, col, np, mpl);
+}
+
 void fractal_hata(void){
   PyMod np("numpy");
-  PyMod plt("matplotlib.pyplot");
+  PyMod mpl("matplotlib.pyplot");
 
-  PyBase fig = (plt|"figure")();
+  PyBase fig = (mpl|"figure")();
 
   PyBase ax = (fig|"add_subplot")(MKTPL(PYLNG(231)), {});
-  PyBase x = (np|"arange")(MKTPL(PYDBL(1), PYDBL(4), PYDBL(3)), {});
-  PyBase y = (np|"arange")(MKTPL(PYDBL(1), PYDBL(5), PYDBL(3)), {});
-//  (ax|"plot")(MKTPL(x, y, PYSTR("g.")), {});
-//  (plt|"pause")(MKTPL(PYDBL(0.005)), {});
+  (ax|"set_xlim")(MKTPL(PYTPL(PYDBL(-0.2), PYDBL(1.2))), {});
+  (ax|"set_ylim")(MKTPL(PYTPL(PYDBL(-0.3), PYDBL(1.1))), {});
+  (ax|"set_xlabel")(MKTPL(PYSTR("X")), {});
+  (ax|"set_ylabel")(MKTPL(PYSTR("X")), {});
+  (ax|"set_title")(MKTPL(PYSTR("2D_Hata")), {});
+  (ax|"set_aspect")(MKTPL(PYSTR("equal")), {});
 
-//  (plt|"show")();
+  double pi = np|"pi";
+  double r1 = 1. / (double)(np|"sqrt")(MKTPL(PYDBL(3.)), {});
+  double r2 = 2. / 3.;
+  PyBase f1 = ROT(pi / 8.) & SC1(r1) & SC2(1., -1.);;
+  PyBase f2 = SFT(1., 0.) & SC1(r2) & SC2(1., -1.) & SFT(-1., 0.);
+  PyBase id = (np|"identity")(MKTPL(PYLNG(3)), {});
+  fractal(id, 1., 0, ax, 10, r1, r2, f1, f2, "g-", np, mpl);
+/*
+  double wpi = pi + .2;
+  PyBase x = (np|"arange")(MKTPL(PYDBL(-wpi), PYDBL(wpi), PYDBL(.1)), {});
+  PyBase y = (np|"arange")(MKTPL(PYDBL(-wpi), PYDBL(wpi), PYDBL(.1)), {});
+  (ax|"plot")(MKTPL(x, y, PYSTR("g.")), {});
+//  (mpl|"pause")(MKTPL(PYDBL(0.005)), {});
+*/
+
+  (fig|"add_subplot")(MKTPL(PYLNG(236)), {});
+
+  (mpl|"show")();
 }
 
 void test_fractal(void){
