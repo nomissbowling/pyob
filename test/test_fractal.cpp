@@ -112,14 +112,8 @@ void scale(PyBase &ax, PyBase &mpl){
   }
 }
 
-void fractal_hata(void){
-  PyMod np("numpy");
-  PyMod mpl("matplotlib.pyplot");
-  PyMod p3d("mpl_toolkits.mplot3d", "Axes3D");
-
-  PyBase fig = (mpl|"figure")();
-
-  PyBase ax = (fig|"add_subplot")(MKTPL(PYLNG(231)),
+void fractal_hata(int pos, PyBase &np, PyBase &mpl, PyBase &fig){
+  PyBase ax = (fig|"add_subplot")(MKTPL(PYLNG(pos)),
     {{"projection", PYSTR("3d")}});
   (ax|"set_xlim")(MKTPL(PYTPL(PYDBL(-0.2), PYDBL(1.2))), {});
   (ax|"set_ylim")(MKTPL(PYTPL(PYDBL(-0.3), PYDBL(1.1))), {});
@@ -138,9 +132,11 @@ void fractal_hata(void){
   PyBase id = (np|"identity")(MKTPL(PYLNG(3)), {});
   fractal(id, 1., 0, ax, 10, r1, r2, f1, f2, 0, np, mpl);
   scale(ax, mpl);
+}
 
-  // new ax (overwrite)
-  ax = (fig|"add_subplot")(MKTPL(PYLNG(236)), {{"projection", PYSTR("3d")}});
+void fractal_test(int pos, PyBase &np, PyBase &mpl, PyBase &fig){
+  PyBase ax = (fig|"add_subplot")(MKTPL(PYLNG(pos)),
+    {{"projection", PYSTR("3d")}});
   (ax|"set_xlim")(MKTPL(PYTPL(PYDBL(-1.5), PYDBL(1.5))), {});
   (ax|"set_ylim")(MKTPL(PYTPL(PYDBL(-1.5), PYDBL(1.5))), {});
   (ax|"set_zlim")(MKTPL(PYTPL(PYDBL(-1.5), PYDBL(1.5))), {});
@@ -149,6 +145,8 @@ void fractal_hata(void){
   (ax|"set_zlabel")(MKTPL(PYSTR("Z")), {});
   (ax|"set_title")(MKTPL(PYSTR("3D_CIRCLE")), {});
   (ax|"set_aspect")(MKTPL(PYSTR("equal")), {});
+
+  double pi = np|"pi";
   double wpi = pi + .2;
   PyBase t = (np|"arange")(MKTPL(PYDBL(-wpi), PYDBL(wpi), PYDBL(.1)), {});
   PyBase x = (np|"cos")(MKTPL(t), {});
@@ -156,8 +154,6 @@ void fractal_hata(void){
   PyBase z = y;
   (ax|"plot")(MKTPL(x, y, z, PYSTR("ro")), {});
   (mpl|"pause")(MKTPL(PYDBL(0.005)), {});
-
-  (mpl|"show")();
 }
 
 void test_fractal(void){
@@ -170,7 +166,14 @@ try{
   fprintf(stdout, "float [%08X]\n", sizeof(float));
   fprintf(stdout, "double [%08X]\n", sizeof(double));
   fprintf(stdout, "long double [%08X]\n", sizeof(long double));
-  fractal_hata();
+
+  PyMod np("numpy");
+  PyMod mpl("matplotlib.pyplot");
+  PyMod p3d("mpl_toolkits.mplot3d", "Axes3D");
+  PyBase fig = (mpl|"figure")();
+  fractal_hata(231, np, mpl, fig);
+  fractal_test(236, np, mpl, fig);
+  (mpl|"show")();
 //  PyBase::end();
 }catch(const std::exception &e){
   fprintf(stderr, "excaption[%s]\n", e.what());
