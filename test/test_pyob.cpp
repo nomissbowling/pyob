@@ -133,7 +133,8 @@ try{
   pyob::PyBase x = (np|"arange")(std::tie(PYLNG(-99), PYLNG(99), PYDBL(.2)), {});
   pyob::PyBase y = (np|"arange")(std::tie(PYLNG(-30), PYLNG(30), PYDBL(.1)), {});
   pyob::PyBase m = (np|"meshgrid")(std::tie(x, y), {});
-  pyob::PyBase zz = (np|"sqrt")(MKTPL((m[0] ^ 2) + (m[1] ^ 2)), {});
+  pyob::PyBase zz = (np|"cos")(MKTPL(m[0]), {}) * (np|"sin")(MKTPL(m[1]), {});
+//  pyob::PyBase zz = (np|"sqrt")(MKTPL((m[0] ^ 2) + (m[1] ^ 2)), {});
 //PYREPR(stdout, zz);
 
   pyob::PyMod matplotlib("matplotlib");
