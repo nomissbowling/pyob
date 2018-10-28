@@ -90,7 +90,8 @@ try{
   PyBase x = (np|"arange")(tie(PYLNG(-99), PYLNG(99), PYDBL(.2)), {});
   PyBase y = (np|"arange")(tie(PYLNG(-30), PYLNG(30), PYDBL(.1)), {});
   PyBase m = (np|"meshgrid")(tie(x, y), {});
-  PyBase zz = (np|"sqrt")(MKTPL((m[0] ^ 2) + (m[1] ^ 2)), {});
+  PyBase zz = (np|"cos")(MKTPL(m[0]), {}) * (np|"sin")(MKTPL(m[1]), {});
+//  PyBase zz = (np|"sqrt")(MKTPL((m[0] ^ 2) + (m[1] ^ 2)), {});
 
   PyMod pyplot("matplotlib.pyplot");
   PyBase ax = (pyplot|"contour")(MKTPL(m[0] * 3.5, m[1] / 5.0, zz), {});
