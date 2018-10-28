@@ -103,6 +103,15 @@ void fractal(PyBase m, double s, int c,
   fractal(f2 & m, s * r2, c + 1, ax, brk, r1, r2, f1, f2, 1 - lr, np, mpl);
 }
 
+void scale(PyBase &ax, PyBase &mpl){
+  for(int i = 0; i < 100; ++i){
+    double j = pow(10., - i / 50.);
+    (ax|"set_xlim")(MKTPL(PYTPL(PYDBL(-0.2 * j), PYDBL(1.2 * j))));
+    (ax|"set_ylim")(MKTPL(PYTPL(PYDBL(-0.3 * j), PYDBL(1.1 * j))));
+    (mpl|"pause")(MKTPL(PYDBL(0.005)), {});
+  }
+}
+
 void fractal_hata(void){
   PyMod np("numpy");
   PyMod mpl("matplotlib.pyplot");
@@ -128,6 +137,7 @@ void fractal_hata(void){
   PyBase f2 = SFT(1., 0.) & SC1(r2) & SC2(1., -1.) & SFT(-1., 0.);
   PyBase id = (np|"identity")(MKTPL(PYLNG(3)), {});
   fractal(id, 1., 0, ax, 10, r1, r2, f1, f2, 0, np, mpl);
+  scale(ax, mpl);
 
   // new ax (overwrite)
   ax = (fig|"add_subplot")(MKTPL(PYLNG(236)), {{"projection", PYSTR("3d")}});
