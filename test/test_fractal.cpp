@@ -117,7 +117,7 @@ void fractal_hata(int pos, PyBase &np, PyBase &mpl, PyBase &fig){
     {{"projection", PYSTR("3d")}});
   (ax|"set_xlim")(MKTPL(PYTPL(PYDBL(-0.2), PYDBL(1.2))), {});
   (ax|"set_ylim")(MKTPL(PYTPL(PYDBL(-0.3), PYDBL(1.1))), {});
-  (ax|"set_zlim")(MKTPL(PYTPL(PYDBL(-0.2), PYDBL(1.2))), {});
+  (ax|"set_zlim")(MKTPL(PYTPL(PYDBL(-0.3), PYDBL(1.1))), {});
   (ax|"set_xlabel")(MKTPL(PYSTR("X")), {});
   (ax|"set_ylabel")(MKTPL(PYSTR("Y")), {});
   (ax|"set_zlabel")(MKTPL(PYSTR("Z")), {});
@@ -125,13 +125,62 @@ void fractal_hata(int pos, PyBase &np, PyBase &mpl, PyBase &fig){
   (ax|"set_aspect")(MKTPL(PYSTR("equal")), {});
 
   double pi = np|"pi";
+  double a = pi / 8.;
   double r1 = 1. / (double)(np|"sqrt")(MKTPL(PYDBL(3.)), {});
   double r2 = 2. / 3.;
-  PyBase f1 = ROT(pi / 8.) & SC1(r1) & SC2(1., -1.);;
+  PyBase f1 = ROT(a) & SC1(r1) & SC2(1., -1.);
   PyBase f2 = SFT(1., 0.) & SC1(r2) & SC2(1., -1.) & SFT(-1., 0.);
   PyBase id = (np|"identity")(MKTPL(PYLNG(3)), {});
-  fractal(id, 1., 0, ax, 10, r1, r2, f1, f2, 0, np, mpl);
+  int brk = 10; // recommend odd value (setting huge value caused to be late)
+  fractal(id, 1., 0, ax, brk, r1, r2, f1, f2, 0, np, mpl);
   scale(ax, mpl);
+}
+
+void fractal_koch(int pos, PyBase &np, PyBase &mpl, PyBase &fig){
+  PyBase ax = (fig|"add_subplot")(MKTPL(PYLNG(pos)),
+    {{"projection", PYSTR("3d")}});
+  (ax|"set_xlim")(MKTPL(PYTPL(PYDBL(-0.2), PYDBL(1.2))), {});
+  (ax|"set_ylim")(MKTPL(PYTPL(PYDBL(-0.3), PYDBL(1.1))), {});
+  (ax|"set_zlim")(MKTPL(PYTPL(PYDBL(-0.3), PYDBL(1.1))), {});
+  (ax|"set_xlabel")(MKTPL(PYSTR("X")), {});
+  (ax|"set_ylabel")(MKTPL(PYSTR("Y")), {});
+  (ax|"set_zlabel")(MKTPL(PYSTR("Z")), {});
+  (ax|"set_title")(MKTPL(PYSTR("2D_Koch")), {});
+  (ax|"set_aspect")(MKTPL(PYSTR("equal")), {});
+
+  double pi = np|"pi";
+  double a = pi / 6.;
+  double r1 = 1. / (double)(np|"sqrt")(MKTPL(PYDBL(3.)), {});
+  double r2 = 1. / (double)(np|"sqrt")(MKTPL(PYDBL(3.)), {});
+  PyBase f1 = SC1(r1) & ROT(a) & SC2(1., -1.);
+  PyBase f2 = SFT(1., 0.) & SC1(r2) & SC2(1., -1.) & ROT(a) & SFT(-1., 0.);
+  PyBase id = (np|"identity")(MKTPL(PYLNG(3)), {});
+  int brk = 10; // recommend odd value (setting huge value caused to be late)
+  fractal(id, 1., 0, ax, brk, r1, r2, f1, f2, 0, np, mpl);
+  scale(ax, mpl);
+}
+
+void fractal_mesh(int pos, PyBase &np, PyBase &mpl, PyBase &fig){
+  PyBase ax = (fig|"add_subplot")(MKTPL(PYLNG(pos)),
+    {{"projection", PYSTR("3d")}});
+  (ax|"set_xlim")(MKTPL(PYTPL(PYDBL(-9.5), PYDBL(9.5))), {});
+  (ax|"set_ylim")(MKTPL(PYTPL(PYDBL(-9.5), PYDBL(9.5))), {});
+  (ax|"set_zlim")(MKTPL(PYTPL(PYDBL(-3.5), PYDBL(3.5))), {});
+  (ax|"set_xlabel")(MKTPL(PYSTR("X")), {});
+  (ax|"set_ylabel")(MKTPL(PYSTR("Y")), {});
+  (ax|"set_zlabel")(MKTPL(PYSTR("Z")), {});
+  (ax|"set_title")(MKTPL(PYSTR("3D_MESH")), {});
+  (ax|"set_aspect")(MKTPL(PYSTR("equal")), {});
+
+  double pi = np|"pi";
+  double wpi = pi * 3.;
+  PyBase t = (np|"arange")(MKTPL(PYDBL(-wpi), PYDBL(wpi), PYDBL(.1)), {});
+  PyBase m = (np|"meshgrid")(MKTPL(t, t), {});
+  PyBase xx = m[0];
+  PyBase yy = m[1];
+  PyBase zz = (np|"cos")(MKTPL(xx), {}) * (np|"sin")(MKTPL(yy), {});
+  (ax|"plot_wireframe")(MKTPL(xx, yy, zz), {{"color", PYSTR("b")}});
+  (mpl|"pause")(MKTPL(PYDBL(0.005)), {});
 }
 
 void fractal_test(int pos, PyBase &np, PyBase &mpl, PyBase &fig){
@@ -172,6 +221,8 @@ try{
   PyMod p3d("mpl_toolkits.mplot3d", "Axes3D");
   PyBase fig = (mpl|"figure")();
   fractal_hata(231, np, mpl, fig);
+  fractal_koch(232, np, mpl, fig);
+  fractal_mesh(234, np, mpl, fig);
   fractal_test(236, np, mpl, fig);
   (mpl|"show")();
 //  PyBase::end();
