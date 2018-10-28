@@ -401,6 +401,19 @@ public:
     po = PyImport_Import(PyStr(s).o());
     if(!po){ throw std::runtime_error("Error loading module: "); }
   }
+  PyMod(const char *from, const char *s, bool sf=true) : PyBase(sf) {
+    p("PyMod(from)");
+    PyMod _main("__main__");
+    PyBase _globals = PyBase(PyModule_GetDict(_main.o()));
+// PyBase::p("_globals: ", (int)_globals.o());
+    PyBase _locals = PyDct();
+// PyBase::p("_locals: ", (int)_locals.o());
+    PyMod _builtins("builtins");
+    po = (_builtins|"__import__")(MKTPL(
+      PYSTR(from), PYOBJ(_globals), PYOBJ(_locals), PYLST(PYSTR(s)), PYLNG(0)),
+      {}).o();
+    if(!po){ throw std::runtime_error("Error loading module (from): "); }
+  }
   virtual ~PyMod(){ q("~PyMod()"); }
 };
 
