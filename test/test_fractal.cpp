@@ -93,8 +93,9 @@ void fractal(PyBase m, double s, int c,
 //    PYREPR(stdout, xyz);
     PyBase x = xyz[0];
     PyBase y = xyz[1];
-    PyBase z = xyz[2];
-    (ax|"plot")(MKTPL(x, y, PYSTR(lr < 0 ? "b-" : lr > 0 ? "g-" : "r-")), {});
+    PyBase z = y; // xyz[2]; // copy from y
+    (ax|"plot")(MKTPL(x, y, z,
+      PYSTR(lr < 0 ? "b-" : lr > 0 ? "g-" : "r-")), {});
 //    (mpl|"pause")(MKTPL(PYDBL(0.005)), {}); // ** will be slowly ***
     return;
   }
@@ -109,11 +110,14 @@ void fractal_hata(void){
 
   PyBase fig = (mpl|"figure")();
 
-  PyBase ax = (fig|"add_subplot")(MKTPL(PYLNG(231)), {});
+  PyBase ax = (fig|"add_subplot")(MKTPL(PYLNG(231)),
+    {{"projection", PYSTR("3d")}});
   (ax|"set_xlim")(MKTPL(PYTPL(PYDBL(-0.2), PYDBL(1.2))), {});
   (ax|"set_ylim")(MKTPL(PYTPL(PYDBL(-0.3), PYDBL(1.1))), {});
+  (ax|"set_zlim")(MKTPL(PYTPL(PYDBL(-0.2), PYDBL(1.2))), {});
   (ax|"set_xlabel")(MKTPL(PYSTR("X")), {});
-  (ax|"set_ylabel")(MKTPL(PYSTR("X")), {});
+  (ax|"set_ylabel")(MKTPL(PYSTR("Y")), {});
+  (ax|"set_zlabel")(MKTPL(PYSTR("Z")), {});
   (ax|"set_title")(MKTPL(PYSTR("2D_Hata")), {});
   (ax|"set_aspect")(MKTPL(PYSTR("equal")), {});
 
@@ -127,11 +131,20 @@ void fractal_hata(void){
 
   // new ax (overwrite)
   ax = (fig|"add_subplot")(MKTPL(PYLNG(236)), {{"projection", PYSTR("3d")}});
+  (ax|"set_xlim")(MKTPL(PYTPL(PYDBL(-1.5), PYDBL(1.5))), {});
+  (ax|"set_ylim")(MKTPL(PYTPL(PYDBL(-1.5), PYDBL(1.5))), {});
+  (ax|"set_zlim")(MKTPL(PYTPL(PYDBL(-1.5), PYDBL(1.5))), {});
+  (ax|"set_xlabel")(MKTPL(PYSTR("X")), {});
+  (ax|"set_ylabel")(MKTPL(PYSTR("Y")), {});
+  (ax|"set_zlabel")(MKTPL(PYSTR("Z")), {});
+  (ax|"set_title")(MKTPL(PYSTR("3D_CIRCLE")), {});
+  (ax|"set_aspect")(MKTPL(PYSTR("equal")), {});
   double wpi = pi + .2;
-  PyBase x = (np|"arange")(MKTPL(PYDBL(-wpi), PYDBL(wpi), PYDBL(.1)), {});
-  PyBase y = (np|"arange")(MKTPL(PYDBL(-wpi), PYDBL(wpi), PYDBL(.1)), {});
-  PyBase z = (np|"arange")(MKTPL(PYDBL(-wpi), PYDBL(wpi), PYDBL(.1)), {});
-  (ax|"plot")(MKTPL(x, y, z, PYSTR("rx")), {});
+  PyBase t = (np|"arange")(MKTPL(PYDBL(-wpi), PYDBL(wpi), PYDBL(.1)), {});
+  PyBase x = (np|"cos")(MKTPL(t), {});
+  PyBase y = (np|"sin")(MKTPL(t), {});
+  PyBase z = y;
+  (ax|"plot")(MKTPL(x, y, z, PYSTR("ro")), {});
   (mpl|"pause")(MKTPL(PYDBL(0.005)), {});
 
   (mpl|"show")();
