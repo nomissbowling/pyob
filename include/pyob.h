@@ -27,6 +27,7 @@
 #define PYOBJ(X) ((pyob::PyBase &)(X))
 #define PYDBL(X) ((pyob::PyBase &)pyob::PyDbl(X))
 #define PYLNG(X) ((pyob::PyBase &)pyob::PyLng(X))
+#define PYBIN(X) ((pyob::PyBase &)pyob::PyBin(X))
 #define PYSTR(X) ((pyob::PyBase &)pyob::PyStr(X))
 #define PYLST(...) ((pyob::PyBase &)pyob::PyLst(std::tie(__VA_ARGS__)))
 #define PYTPL(...) ((pyob::PyBase &)pyob::PyTpl(std::tie(__VA_ARGS__)))
@@ -43,6 +44,7 @@ namespace pyob {
 class PyBase;
 class PyItem;
 class PyStr;
+class PyBin;
 class PyLng;
 class PyDbl;
 class PyObj;
@@ -248,6 +250,17 @@ public:
     else Py_INCREF(po);
   }
   virtual ~PyStr(){ q("~PyStr()"); }
+};
+
+class PyBin : public PyBase {
+protected:
+public:
+  PyBin(const char *s, Py_ssize_t l, bool sf=true) : PyBase(sf) { p("PyBin()");
+    po = PyBytes_FromStringAndSize(s, l); // only allocation when s == NULL
+    if(!po){ throw std::runtime_error("Error can not create buffer"); }
+    else Py_INCREF(po);
+  }
+  virtual ~PyBin(){ q("~PyBin()"); }
 };
 
 class PyLng : public PyBase {
