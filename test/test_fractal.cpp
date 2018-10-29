@@ -112,7 +112,8 @@ void fractal(PyBase m, double s, int c,
 
 void scale(int n, const char *title, int w, int h, AREA a,
   PyBase &ax, PyBase &np, PyBase &mpl){
-  PyMod image("PIL.Image");
+  PyMod image("PIL.Image"); // import PIL.Image (same as below)
+//  PyBase image = PyMod("PIL", "Image")|"Image"; // from PIL import Image
   PyLst imglst;
   for(int i = 0; i < n; ++i){
     double j = pow(10., - i / 50.);
