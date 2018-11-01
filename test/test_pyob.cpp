@@ -295,6 +295,23 @@ fwprintf(stderr, L"[%s]\n", _w.ascii()); // ['\u9871'] OK
 fwprintf(stderr, L"[%s]\n", (wchar_t *)_w); // [?] L.E. 71 98 OK
 //fprintf(stderr, "[%s]\n", (char *)_w); // BAD (force str as bytes) no '\0' ?
 
+  pyob::PyBin __binicon(NULL, 0);
+pyob::PyBase::p("__binicon", __binicon.len());
+fwprintf(stderr, L"[%s]\n", __binicon.ascii()); fflush(stderr);
+  const char *TESTDATA = "./binicon.bin";
+  FILE *fp = NULL;
+  errno_t err = fopen_s(&fp, TESTDATA, "rb");
+  if(err || !fp) fprintf(stderr, "can not open [%s]\n", TESTDATA);
+  else{
+    char buf[1024]; // *** be careful ***
+    size_t rc = fread(buf, 1, sizeof(buf), fp);
+fprintf(stdout, "read: %06d [%s]\n", rc, TESTDATA); fflush(stdout);
+    fclose(fp);
+    __binicon = pyob::PyBin(buf, rc);
+  }
+pyob::PyBase::p("__binicon", __binicon.len());
+fwprintf(stderr, L"[%s]\n", __binicon.ascii()); fflush(stderr);
+
   const char *ascicon =
     "789cc592310e8330100497e006450afe41a8229e41e187f184b4f9457a1a3f27\x0A"
     "657a8acbad6d029130a241597b59e6245b823ba0c0094d63350d5e27e006c0da\x0A"
