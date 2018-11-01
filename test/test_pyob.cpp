@@ -120,6 +120,37 @@ PYREPR(stdout, c);
   pyob::PyBase d = a & b;
 PYREPR(stdout, d);
 PYREPR(stdout, a & a);
+
+  pyob::PyTpl tpl23(MKTPL(PYLNG(2), PYLNG(3)));
+  const char le_b24[32 * 6] = {
+    0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
+    0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00,
+    0x04, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00};
+  pyob::PyBin ble24(le_b24, sizeof(le_b24));
+  pyob::PyBase i32 = (np|"ndarray")(MKTPL(tpl23, PYSTR("int"), ble24), {});
+PYREPR(stdout, i32);
+//array([[0, 1, 2], [3, 4, 5]])
+  pyob::PyBase f32 = (np|"ndarray")(MKTPL(tpl23, PYSTR("float32"), ble24), {});
+PYREPR(stdout, f32);
+//array([[  0.00000000e+00,   1.40129846e-45,   2.80259693e-45],
+//       [  4.20389539e-45,   5.60519386e-45,   7.00649232e-45]], dtype=float32)
+  const char le_b48[64 * 6] = {
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  pyob::PyBin ble48(le_b48, sizeof(le_b48));
+  pyob::PyBase f64 = (np|"ndarray")(MKTPL(tpl23, PYSTR("float"), ble48), {});
+PYREPR(stdout, f64);
+//array([[  0.00000000e+000,   4.94065646e-324,   9.88131292e-324],
+//       [  1.48219694e-323,   1.97626258e-323,   2.47032823e-323]])
+  pyob::PyTpl tpl6(MKTPL(PYLNG(6)));
+  pyob::PyBase f_6 = (np|"ndarray")(MKTPL(tpl6, PYSTR("float"), ble48), {});
+PYREPR(stdout, f_6);
+//array([  0.00000000e+000,   4.94065646e-324,   9.88131292e-324,
+//         1.48219694e-323,   1.97626258e-323,   2.47032823e-323])
 }catch(const std::exception &e){
   fprintf(stderr, "exception[%s]\n", e.what());
 }
