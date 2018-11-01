@@ -101,7 +101,7 @@ PYREPR(stdout, b); // kept
   PyDct dcttpl;
   dcttpl[PYTPL(PYLNG(1), PYLNG(2))] = PYLNG(11);
 */
-  PyDct dcttpl(true, { {PYTPL(PYLNG(1), PYLNG(2)), PYLNG(22)} });
+  PyDct dcttpl({ {"", { {PYTPL(PYLNG(1), PYLNG(2)), PYLNG(22)} } } });
   dcttpl[PYTPL(PYLNG(3), PYLNG(4))] = PYLNG(44); // tuple as another instance
 PYREPR(stdout, dcttpl);
 PYREPR(stdout, dcttpl[keytpl]);
@@ -119,7 +119,7 @@ PYREPR(stdout, dcttpl);
   dctstr[PYSTR("b")] = PYDBL(99.99);
 PYREPR(stdout, dctstr);
 
-  PyDct dctobj(true, { {PYSTR("x"), PYLNG(11)}, {PYSTR("y"), PYLNG(22)}, {PYSTR("z"), PYLNG(33)} });
+  PyDct dctobj({ {"", { {PYSTR("x"), PYLNG(11)}, {PYSTR("y"), PYLNG(22)}, {PYSTR("z"), PYLNG(33)} } } });
   dctobj["y"] = PYDBL(22.22);
 PYREPR(stdout, dctobj);
 }catch(const std::exception &e){

@@ -381,16 +381,18 @@ public:
       PyDict_SetItemString(po, it->first, it->second.o());
     }
   }
-  // dummy (to determinate ambiguous unordered_map<> type) not const PyBase &
-  PyDct(bool dummy, const std::unordered_map<const PyBase, PyBase &, PyBase::HashKey, PyBase::HashEqualTo> &d, bool sf=true) : PyBase(sf) {
-    p("PyDct(dict{PyBase &})");
+  // nest{} (to determinate ambiguous unordered_map<> type) not const PyBase &
+  PyDct(const std::unordered_map< const char *, const std::unordered_map<const PyBase, PyBase &, PyBase::HashKey, PyBase::HashEqualTo> > &dd, bool sf=true) : PyBase(sf) {
+    p("PyDct(dict{{PyBase &}})");
     po = PyDict_New();
-    if(!po){ throw std::runtime_error("Error dict{PyBase &}: "); }
+    if(!po){ throw std::runtime_error("Error dict{{PyBase &}}: "); }
     else Py_INCREF(po);
-    for(auto it = d.begin(); it != d.end(); ++it){
-//      fprintf(stderr, "[%08X]", ((PyBase &)it->first).o());
-//      fprintf(stderr, "=[%08X]\n", it->second.o());
-      PyDict_SetItem(po, ((PyBase &)it->first).o(), it->second.o());
+    for(auto itdd = dd.begin(); itdd != dd.end(); ++itdd){
+      for(auto it = itdd->second.begin(); it != itdd->second.end(); ++it){
+//        fprintf(stderr, "[%08X]", ((PyBase &)it->first).o());
+//        fprintf(stderr, "=[%08X]\n", it->second.o());
+        PyDict_SetItem(po, ((PyBase &)it->first).o(), it->second.o());
+      }
     }
   }
   PyDct(bool sf=true) : PyBase(sf) { p("PyDct()");
