@@ -121,6 +121,7 @@ PYREPR(stdout, c);
 PYREPR(stdout, d);
 PYREPR(stdout, a & a);
 
+  pyob::PyTpl tpl32(MKTPL(PYLNG(3), PYLNG(2)));
   pyob::PyTpl tpl23(MKTPL(PYLNG(2), PYLNG(3)));
   const char le_b24[32 * 6] = {
     0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
@@ -151,6 +152,43 @@ PYREPR(stdout, f64);
 PYREPR(stdout, f_6);
 //array([  0.00000000e+000,   4.94065646e-324,   9.88131292e-324,
 //         1.48219694e-323,   1.97626258e-323,   2.47032823e-323])
+
+  std::vector<double> vec{0., 1., 2., 3., 4., 5.};
+  pyob::PyBin bvec((const char *)&vec[0], vec.size() * sizeof(vec[0]));
+PYREPR(stdout, bvec);
+  pyob::PyBase d623 = (np|"ndarray")(MKTPL(tpl23, PYSTR("float64"), bvec), {});
+PYREPR(stdout, d623);
+  pyob::PyBase d632 = (np|"ndarray")(MKTPL(tpl32, PYSTR("float64"), bvec), {});
+PYREPR(stdout, d632);
+PYREPR(stdout, d632|"T");
+
+  std::vector< std::vector<int> > mat{{0, 1}, {2, 3}, {4, 5}}; // discontinuity
+  for(int maj = 0; maj < 3; ++maj){
+    for(int mai = 0; mai < 2; ++mai){
+      fprintf(stdout, " %08X", mat[maj][mai]);
+    }
+    fprintf(stdout, "\n");
+  }
+  pyob::PyBin bmat((const char *)&mat[0][0],
+    mat.size() * mat[0].size() * sizeof(mat[0][0])); // discontinuity ***BAD***
+PYREPR(stdout, bmat);
+  pyob::PyBase i632 = (np|"ndarray")(MKTPL(tpl32, PYSTR("int"), bmat), {});
+PYREPR(stdout, i632); // random output
+PYREPR(stdout, i632|"T");
+
+  int mbuf[] = {0, 1, 2, 3, 4, 5}; // continuity
+  std::vector< const int * > mv{&mbuf[0], &mbuf[2], &mbuf[4]}; // fake
+  for(int mvj = 0; mvj < 3; ++mvj){
+    for(int mvi = 0; mvi < 2; ++mvi){
+      fprintf(stdout, " %08X", mv[mvj][mvi]);
+    }
+    fprintf(stdout, "\n");
+  }
+  pyob::PyBin bmv((const char *)&mv[0][0], sizeof(mbuf)); // continuity
+PYREPR(stdout, bmv);
+  pyob::PyBase m623 = (np|"ndarray")(MKTPL(tpl23, PYSTR("int"), bmv), {});
+PYREPR(stdout, m623);
+PYREPR(stdout, m623|"T");
 }catch(const std::exception &e){
   fprintf(stderr, "exception[%s]\n", e.what());
 }
