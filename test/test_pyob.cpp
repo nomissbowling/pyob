@@ -153,7 +153,7 @@ PYREPR(stdout, f_6);
 //array([  0.00000000e+000,   4.94065646e-324,   9.88131292e-324,
 //         1.48219694e-323,   1.97626258e-323,   2.47032823e-323])
 
-  std::vector<double> vec{0., 1., 2., 3., 4., 5.};
+  std::vector<double> vec{0., 1., 2., 3., 4., 5.}; // continuity
   pyob::PyBin bvec((const char *)&vec[0], vec.size() * sizeof(vec[0]));
 PYREPR(stdout, bvec);
   pyob::PyBase d623 = (np|"ndarray")(MKTPL(tpl23, PYSTR("float64"), bvec), {});
@@ -162,7 +162,7 @@ PYREPR(stdout, d623);
 PYREPR(stdout, d632);
 PYREPR(stdout, d632|"T");
 
-  std::vector< std::vector<int> > mat{{0, 1}, {2, 3}, {4, 5}}; // discontinuity
+  std::array< std::array<int, 2>, 3 > mat{ {{0, 1}, {2, 3}, {4, 5}} }; // fixed
   for(int maj = 0; maj < 3; ++maj){
     for(int mai = 0; mai < 2; ++mai){
       fprintf(stdout, " %08X", mat[maj][mai]);
@@ -170,10 +170,10 @@ PYREPR(stdout, d632|"T");
     fprintf(stdout, "\n");
   }
   pyob::PyBin bmat((const char *)&mat[0][0],
-    mat.size() * mat[0].size() * sizeof(mat[0][0])); // discontinuity ***BAD***
+    mat.size() * mat[0].size() * sizeof(mat[0][0])); // continuity
 PYREPR(stdout, bmat);
   pyob::PyBase i632 = (np|"ndarray")(MKTPL(tpl32, PYSTR("int"), bmat), {});
-PYREPR(stdout, i632); // random output
+PYREPR(stdout, i632);
 PYREPR(stdout, i632|"T");
 
   int mbuf[] = {0, 1, 2, 3, 4, 5}; // continuity

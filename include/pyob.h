@@ -5,6 +5,7 @@
 #ifndef __PYOB_H__
 #define __PYOB_H__
 
+#include <array>
 #include <vector>
 #include <tuple>
 #include <map>
